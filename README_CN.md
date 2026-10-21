@@ -1,0 +1,246 @@
+<p align="left">
+    <a href="README.md">English</a>&nbsp;｜&nbsp;中文
+</p>
+<br>
+
+<p align="center">
+    <img src="assets/logo-zh.png" alt="Hy-Nomas" width="400"/> <br>
+</p>
+
+<h1 align="center">
+    Hy-Nomas: Towards Free-Form Interactive World Generation
+</h1>
+
+<div align="center" style="line-height: 1;">
+
+[![许可证](https://img.shields.io/badge/License-Apache%202.0-blue)](LICENSE)
+&nbsp;&nbsp;
+[![Hy-Nomas](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Hy--Nomas-ffc107?color=ffc107&logoColor=white)](https://huggingface.co/tencent/Hy-Nomas)
+&nbsp;&nbsp;
+[![Hy-Nomas-Bench](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Hy--Nomas--Bench-ffc107?color=ffc107&logoColor=white)](https://huggingface.co/datasets/tencent/Hy-Nomas-Bench)
+&nbsp;&nbsp;
+<a href="https://github.com/Tencent-Hunyuan/Hy-Nomas" target="_blank"><img src="https://img.shields.io/badge/Page-bb8a2e.svg?logo=github" height="22" alt="Hy-Nomas on GitHub"></a>
+&nbsp;&nbsp;
+<a href="https://x.com/TencentHunyuan" target="_blank"><img src="https://img.shields.io/badge/Hunyuan-black.svg?logo=x" height="22" alt="Hunyuan on X"></a>
+
+</div>
+
+<p align="center">
+    🖥️&nbsp;<a href="https://hy-nomas.hy.tencent.com/demo"><b>交互式演示</b></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    🌐&nbsp;<a href="https://hy-nomas.hy.tencent.com/"><b>官方网站</b></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    📄&nbsp;<b>技术报告（即将发布）</b>
+</p>
+
+---
+
+## 目录
+
+- [模型介绍](#模型介绍)
+- [核心特性](#核心特性)
+- [使用指南](#使用指南)
+  - [环境配置](#环境配置)
+  - [模型资源](#模型资源)
+  - [推理](#推理)
+    - [低显存 GPU 推理](#低显存-gpu-推理)
+  - [交互式演示](#交互式演示)
+- [LoRA 微调](#lora-微调)
+  - [SFT 数据准备](#sft-数据准备)
+  - [离线序列打包](#离线序列打包)
+  - [训练与合并](#训练与合并)
+- [贡献指南](CONTRIBUTING.md)
+- [安全问题报告](SECURITY.md)
+- [许可证](#许可证)
+- [联系我们](#联系我们)
+
+---
+
+## 模型介绍
+
+**Hy-Nomas** 是一个自由形式交互式视频世界生成模型，支持自由形式的多轮文本提示词控制或相机控制。本仓库提供训练、推理、交互式演示和数据标注代码。
+
+## 核心特性
+
+- **分段生成：** 通过片段级提示词或相机控制信号，自回归地逐段生成世界，并维护贯穿整个生成过程的 KV 缓存以保持一致性。
+- **自由形式提示词控制：** 使用任意类型的自由形式用户提示词控制世界生成，创造想象中的物体、风格、场景和动作。
+- **相机控制：** 将相机轨迹与文本提示词一起作为生成条件。
+- **蒸馏推理：** 推理使用 8 步去噪，并采用经过微调的 PixelUMM 解码器，对 32 通道 DCAE-V 潜变量进行解码。
+- **交互式演示：** Web 界面支持多轮生成，并在片段边界进行解码。
+- **微调与数据准备：** 使用自定义视频数据集进行 LoRA 微调，并通过我们的标注流程从本地视频准备训练数据。
+
+## 使用指南
+
+### 环境配置
+
+请选择以下两种环境配置方式之一。**强烈推荐使用预打包 Docker 镜像**，其中已配套准备 Python 环境、PyTorch 和所需的 CUDA 注意力内核。
+
+#### 方式一：使用预打包 Docker 镜像（推荐）
+
+请准备 Linux 主机、兼容的 NVIDIA 驱动、Docker 和 NVIDIA Container Toolkit。在仓库根目录执行：
+
+```bash
+export HY_NOMAS_IMAGE="hynomasoss/hynomasoss:cu130"
+
+docker pull "$HY_NOMAS_IMAGE"
+docker run --rm -it --gpus all --ipc=host --network=host \
+  -v "$PWD:/workspace/Hy-Nomas" \
+  -w /workspace/Hy-Nomas \
+  "$HY_NOMAS_IMAGE" bash
+```
+
+后续命令均在容器内执行，直接使用镜像预装的 Python 环境。将模型资源放在挂载的仓库目录中，或额外挂载模型目录；下方启动命令应填写容器内可见的模型路径。
+
+#### 方式二：手动安装
+
+请准备 Linux、Python 3.12+、uv、兼容的 NVIDIA 驱动、CUDA 13.0 Toolkit（`nvcc`）和 C++ 编译器。在仓库根目录执行：
+
+```bash
+uv sync --extra all
+source .venv/bin/activate
+```
+
+`all` 依赖组包含 PyTorch 2.10.0（CUDA 13.0）、FlashAttention 2、FlashAttention 3 和 MagiAttention。`pyproject.toml` 已配置 PyTorch CUDA 包源、FA3 官方源码地址，并为注意力内核关闭构建隔离，使其可以使用环境中的 PyTorch 进行编译。内核编译可能需要一些时间。
+
+### 模型资源
+
+模型仓库包含 DiT 生成模型、LoRA 适配器、视频自编码器与解码器，以及用于在线提示词增强的 Nomas-PE。
+
+从 Hugging Face 下载 `tencent/Hy-Nomas` 的全部模型权重，保留仓库目录结构：
+
+```bash
+export Hy_Nomas_Model_Path=/path/to/Hy-Nomas
+hf download tencent/Hy-Nomas --local-dir "${Hy_Nomas_Model_Path}"
+```
+
+只需将 `Hy_Nomas_Model_Path` 设置为实际下载目录一次。后续命令会复用已设置的值；新终端未设置时默认使用 `/path/to/Hy-Nomas`。点击下方模型名称，即可在 Hugging Face 上查看其文件。
+
+| 类别 | 模型资源 | 用途 |
+|:---|:---|:---|
+| DiT | **[基础自回归 DiT（FP32）](https://huggingface.co/tencent/Hy-Nomas/tree/main/DiT/base_ar)** | 未蒸馏检查点，用于 segment forcing LoRA 微调。 |
+| DiT | **[蒸馏 DiT（FP32）](https://huggingface.co/tencent/Hy-Nomas/tree/main/DiT/distilled)** | 用于 4/6/8 步快速推理和交互式演示的检查点，也作为合并微调后 LoRA 适配器的基础模型。 |
+| DiT | **[量化蒸馏 DiT（INT8）](https://huggingface.co/tencent/Hy-Nomas/tree/main/DiT/distilled_int8)** | 量化检查点，用于低显存推理，包括单 GPU 部署。 |
+| DiT | **[Cinematic LoRA](https://huggingface.co/tencent/Hy-Nomas/tree/main/DiT/lora_weights/cinematic)** | 使用电影感数据训练的 LoRA 适配器，可合并到蒸馏 DiT 中，以提升生成世界的视觉质量。 |
+| DiT | **[Robotics LoRA](https://huggingface.co/tencent/Hy-Nomas/tree/main/DiT/lora_weights/dual_arm_robotics)** | 使用 [RealSource-World](https://huggingface.co/datasets/RealmanRobot/RealSource-World) 真实机械臂数据集训练的 LoRA 适配器，可合并到蒸馏 DiT 中，以增强生成世界的机器人仿真能力。 |
+| VAE | **[DCAE-V](https://huggingface.co/tencent/Hy-Nomas/tree/main/VAE/DCAE-V)** | 视频自编码器，用于将训练视频编码为潜变量，并对潜变量进行解码。 |
+| VAE | **[微调版 PixelUMM 解码器](https://huggingface.co/tencent/Hy-Nomas/tree/main/VAE/PixelUMM_FT)** | 用于将生成的 DCAE-V 潜变量解码为视频帧的解码器。 |
+| VAE | **[量化版 PixelUMM 解码器（FP8）](https://huggingface.co/tencent/Hy-Nomas/tree/main/VAE/PixelUMM_FT_FP8)** | 使用 FP8 权重的解码器，用于降低显存占用并加速解码。 |
+| PE | **[Nomas-PE](https://huggingface.co/tencent/Hy-Nomas/tree/main/PE)** | 交互式演示使用的在线提示词增强模型，将用户指令转换为结构化的生成提示词。 |
+
+### 推理
+
+在仓库根目录使用 `configs/experiment/inference.yaml` 启动，覆盖模型路径、提示词文件和输出目录：
+
+```bash
+export Hy_Nomas_Model_Path="${Hy_Nomas_Model_Path:-/path/to/Hy-Nomas}"
+
+bash scripts/inference/inference_from_config.sh configs/experiment/inference.yaml \
+  dit_weight="${Hy_Nomas_Model_Path}/DiT/distilled/diffusion_pytorch_model_ema_0_995.safetensors" \
+  model.vae.checkpoint="${Hy_Nomas_Model_Path}/VAE/PixelUMM_FT/diffusion_pytorch_model.safetensors" \
+  inference.prompt=/path/to/prompts.json \
+  inference.save_path=./outputs/distill
+```
+
+#### 低显存 GPU 推理
+
+使用 `configs/experiment/single_gpu_low_mem_inference.yaml`，**Hy-Nomas 支持 NVIDIA GeForce RTX 4090 单卡推理**。该配置通过以下优化降低显存占用：
+
+- **INT8 DiT 权重与 KV cache：** 使用 INT8 存储权重及缓存的 Key/Value，DiT 线性层和注意力仍使用 BF16 计算。
+- **滑动窗口历史：** 限制保留的历史上下文，避免 KV cache 随生成片段持续增长。
+- **CPU offload：** 文本编码器、DiT 和 VAE 仅在各自处理阶段移入 GPU，完成后移回 CPU。
+- **单卡计算内核：** DiT 使用 FlexAttention，解码使用 CUTLASS FP8，并关闭序列并行（`sp_size=1`）。
+
+请使用兼容的 INT8 DiT 检查点和 FP8 解码器检查点。在 `nvidia-smi` 仅能看到一张 GPU 的主机或容器中执行：
+
+```bash
+export Hy_Nomas_Model_Path="${Hy_Nomas_Model_Path:-/path/to/Hy-Nomas}"
+
+bash scripts/inference/inference_from_config.sh configs/experiment/single_gpu_low_mem_inference.yaml \
+  dit_weight="${Hy_Nomas_Model_Path}/DiT/distilled_int8/diffusion_pytorch_model_ema_0_995_int8.safetensors" \
+  model.vae.checkpoint="${Hy_Nomas_Model_Path}/VAE/PixelUMM_FT_FP8/diffusion_pytorch_model_fp8.safetensors" \
+  inference.prompt=/path/to/prompts.json \
+  inference.save_path=./outputs/single_gpu
+```
+
+CPU offload 需要足够的系统内存来存放模型，并会增加 CPU–GPU 数据传输开销。峰值显存占用取决于分辨率和片段长度。
+
+### 交互式演示
+
+访问[在线交互式演示](https://hy-nomas.hy.tencent.com/)，体验 Hy-Nomas。
+
+请参阅[演示部署指南](apps/README.md)，了解如何启动 Web 网关和 GPU 工作进程、配置模型资源，以及在单机或多机上运行。演示默认使用 `configs/experiment/inference.yaml`。
+
+## LoRA 微调
+
+### SFT 数据准备
+
+使用 [captioning-harness](captioning_harness/README.md) 从本地视频准备训练数据。该流程对每个片段进行标注，使用 DCAE-V 编码视频帧，并将结果打包为用于 SFT 的 Arrow 或 Parquet 文件。有关部署 K3 服务、运行标注与打包、附加归一化相机轨迹的详细说明，请参阅该指南。
+
+### 离线序列打包
+
+从已编码的训练文件生成 packing plan，在仓库根目录执行：
+
+```bash
+python scripts/data_processing/build_sft_packing_plan.py \
+  --input /path/to/train.arrow \
+  --output /path/to/train_packing.json \
+  --max-seq-len 360000 \
+  --num-groups 16 \
+  --seed 42
+```
+
+示例生成 16 组，对应 DP16 × SP8（128 张 GPU）。组数应为数据并行度的整数倍、不超过样本数，且在 `--max-seq-len` 限制下有足够容量。训练时使用相同的训练文件及行顺序，并通过 `dataset.token_packing_sorted_groups_path` 传入生成的 JSON。详情见[序列打包说明](captioning_harness/README.md#offline-sequence-packing)。
+
+### 训练与合并
+
+LoRA 微调以**未蒸馏检查点**为基础，使用 segment forcing 训练流程。训练完成后，将学到的 LoRA 权重合并到对应的**蒸馏后检查点**，生成新的合并检查点用于推理。
+
+![LoRA 微调流程：在未蒸馏检查点上训练，将 LoRA 权重合并到蒸馏后检查点。](assets/lora-finetuning.svg)
+
+`configs/experiment/sft.yaml` 已启用 LoRA：rank/alpha 为 256，dropout 为 0，使用 Muon 优化器、恒定学习率 `1e-4`，训练 2,000 步。仅训练 LoRA 参数。
+
+```bash
+export Hy_Nomas_Model_Path="${Hy_Nomas_Model_Path:-/path/to/Hy-Nomas}"
+
+bash scripts/train/train_from_config.sh configs/experiment/sft.yaml \
+  dit_weight="${Hy_Nomas_Model_Path}/DiT/base_ar/diffusion_pytorch_model_fp32.safetensors" \
+  model.vae.checkpoint="${Hy_Nomas_Model_Path}/VAE/DCAE-V/dc-ae-v-1.0-f32t4c32-bf16.pt" \
+  dataset.data_file=/path/to/train.arrow \
+  dataset.token_packing_sorted_groups_path=/path/to/train_packing.json \
+  output_dir=./outputs/segment_lora
+```
+
+训练配置使用 SP8；128 张 GPU 对应 DP16 × SP8。请根据硬件设置启动规模，并为相应的数据并行度生成 packing plan。
+
+先导出保存的 LoRA 检查点，再将其合并到架构和参数形状匹配的蒸馏后检查点：
+
+```bash
+export Hy_Nomas_Model_Path="${Hy_Nomas_Model_Path:-/path/to/Hy-Nomas}"
+
+python -m scripts.train.export_lora_checkpoint \
+  ./outputs/segment_lora/checkpoints/global_step-2000 \
+  ./outputs/segment_lora/adapter
+
+python -m scripts.train.merge_lora \
+  --base "${Hy_Nomas_Model_Path}/DiT/distilled/diffusion_pytorch_model_ema_0_995.safetensors" \
+  --adapter ./outputs/segment_lora/adapter \
+  --output ./outputs/merged_model.safetensors
+```
+
+在[推理命令](#推理)中设置 `dit_weight=./outputs/merged_model.safetensors` 即可使用合并后的模型。
+
+## 许可证
+
+本项目采用 [Apache License 2.0](LICENSE) 许可证。
+
+## 致谢
+
+感谢 [Gemma 4](https://deepmind.google/models/gemma/gemma-4/)、[Qwen3.8](https://qwen.ai/blog?id=qwen3.8)、[Kimi-K3](https://github.com/MoonshotAI/Kimi-K3)、[DCAE-V](https://github.com/dc-ai-projects/DC-Gen) 和 [MagiAttention](https://github.com/SandAI-org/MagiAttention) 团队为社区作出的宝贵贡献，以及为本项目提供支持的模型、研究成果和工具。
+
+## 联系我们
+
+如有问题、非安全相关的缺陷报告或建议，请在本仓库提交 issue，或通过邮箱 [hy_nomas@tencent.com](mailto:hy_nomas@tencent.com) 联系我们。贡献指南见 [CONTRIBUTING.md](CONTRIBUTING.md)；疑似安全漏洞请按照 [SECURITY.md](SECURITY.md) 私下报告。
+
+---
+
+<p align="center">
+    <i>Hy-Nomas · 自由形式交互式世界生成。</i>
+</p>
