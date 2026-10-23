@@ -15,13 +15,11 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue)](LICENSE)
 &nbsp;&nbsp;
-[![Hy-Nomas](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Hy--Nomas-ffc107?color=ffc107&logoColor=white)](https://huggingface.co/tencent/Hy-Nomas)
+<a href="https://huggingface.co/tencent/Hy-Nomas" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Hy--Nomas-ffc107?color=ffc107&logoColor=white" alt="Hy-Nomas"></a>
 &nbsp;&nbsp;
-[![Hy-Nomas-Bench](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Hy--Nomas--Bench-ffc107?color=ffc107&logoColor=white)](https://huggingface.co/datasets/tencent/Hy-Nomas-Bench)
+<a href="https://huggingface.co/datasets/tencent/Hy-Nomas-Bench" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Hy--Nomas--Bench-ffc107?color=ffc107&logoColor=white" alt="Hy-Nomas-Bench"></a>
 &nbsp;&nbsp;
-<a href="https://github.com/Tencent-Hunyuan/Hy-Nomas" target="_blank"><img src="https://img.shields.io/badge/Page-bb8a2e.svg?logo=github" height="22" alt="Hy-Nomas on GitHub"></a>
-&nbsp;&nbsp;
-<a href="https://x.com/TencentHunyuan" target="_blank"><img src="https://img.shields.io/badge/Hunyuan-black.svg?logo=x" height="22" alt="Hunyuan on X"></a>
+<a href="https://x.com/TencentHunyuan/status/2113676827114053892" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Hy-black.svg?logo=x" height="22" alt="Hy on X"></a>
 
 </div>
 
@@ -30,6 +28,8 @@
     🌐&nbsp;<a href="https://hy-nomas.hy.tencent.com/"><b>Official Website</b></a>&nbsp;&nbsp;|&nbsp;&nbsp;
     📄&nbsp;<b>Technical Report (Coming Soon)</b>
 </p>
+
+https://github.com/user-attachments/assets/e7a2528c-4ccc-461c-8f09-207650f1f0bd
 
 ---
 
