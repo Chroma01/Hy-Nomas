@@ -42,6 +42,7 @@
   - [Model Assets](#model-assets)
   - [Inference](#inference)
     - [Inference with Low-Mem GPU](#inference-with-low-mem-gpu)
+    - [Inference with Diffusers](#inference-with-diffusers)
   - [Interactive Demo](#interactive-demo)
 - [LoRA Fine-Tuning](#lora-fine-tuning)
   - [SFT Data Preparation](#sft-data-preparation)
@@ -161,6 +162,72 @@ bash scripts/inference/inference_from_config.sh configs/experiment/single_gpu_lo
 ```
 
 CPU offload requires enough system RAM for the models and adds CPU–GPU transfer overhead. Peak GPU memory depends on resolution and segment length.
+
+#### Inference with Diffusers
+
+Upgrade your diffusers to use `HyNomasModularPipeline`.
+
+```bash
+pip install -e "diffusers[hy-nomas] @ git+https://github.com/jiaxiangc/diffusers.git@hy-nomas"
+```
+
+Hy-Nomas supports multi-turn interactive generation. This example generates two five-second segments.
+
+```python
+import json
+
+import torch
+from diffusers import HyNomasModularPipeline
+from diffusers.utils import export_to_video
+
+pipe = HyNomasModularPipeline.from_pretrained("tencent/Hy-Nomas")
+pipe.load_components(dtype=torch.bfloat16)
+pipe.to(device="cuda", dtype=torch.bfloat16)
+# Use the FlashAttention and MagiAttention kernels installed with Hy-Nomas.
+pipe.transformer.enable_reference_attention(text_backend="flash_varlen", deterministic=True)
+
+prompts = [
+    {
+        "Style": "Cinematic fantasy", "perspective_view": "Third-person view",
+        "subject_list": [{
+            "subject_id": "fox", "display_name": "a small orange fox",
+            "subject_attribute": "Orange fur, white chest, and a fluffy tail.",
+        }],
+        "segments": [{
+            "visual_description_long": (
+                "A small orange fox stands on a stone path in a luminous forest. "
+                "Blue fireflies drift between the trees."
+            ),
+            "contained_actions": [{
+                "start_time": "00:00.000", "end_time": "00:05.000",
+                "action_description": "The fox walks slowly along the path.",
+            }],
+        }],
+    },
+    {
+        "segments": [{
+            "description_change": "Glowing blue flowers open beside the path as the fox continues forward.",
+            "contained_actions": [{
+                "start_time": "00:00.000", "end_time": "00:05.000",
+                "action_description": "The fox passes the flowers and looks around.",
+            }],
+        }],
+    },
+]
+
+videos = pipe(
+    prompt=[json.dumps(prompt) for prompt in prompts],
+    height=704,
+    width=1280,
+    num_frames=240,
+    segment_latent_lengths=[30, 30],
+    fps=24,
+    num_inference_steps=4,
+    generator=torch.Generator("cpu").manual_seed(42),
+    output="videos",
+)
+export_to_video(videos[0], "hy_nomas_video.mp4", fps=24, quality=None)
+```
 
 ### Interactive Demo
 
