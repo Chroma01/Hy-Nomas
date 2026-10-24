@@ -180,7 +180,7 @@ import torch
 from diffusers import HyNomasModularPipeline
 from diffusers.utils import export_to_video
 
-pipe = HyNomasModularPipeline.from_pretrained("tencent/Hy-Nomas")
+pipe = HyNomasModularPipeline.from_pretrained("tencent/Hy-Nomas-Diffusers")
 pipe.load_components(dtype=torch.bfloat16)
 pipe.to(device="cuda", dtype=torch.bfloat16)
 # Use the FlashAttention and MagiAttention kernels installed with Hy-Nomas.
