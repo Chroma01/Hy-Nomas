@@ -42,6 +42,7 @@ https://github.com/user-attachments/assets/e7a2528c-4ccc-461c-8f09-207650f1f0bd
   - [模型资源](#模型资源)
   - [推理](#推理)
     - [低显存 GPU 推理](#低显存-gpu-推理)
+    - [使用 Diffusers 推理](#使用-diffusers-推理)
   - [交互式演示](#交互式演示)
 - [LoRA 微调](#lora-微调)
   - [SFT 数据准备](#sft-数据准备)
@@ -161,6 +162,72 @@ bash scripts/inference/inference_from_config.sh configs/experiment/single_gpu_lo
 ```
 
 CPU offload 需要足够的系统内存来存放模型，并会增加 CPU–GPU 数据传输开销。峰值显存占用取决于分辨率和片段长度。
+
+#### 使用 Diffusers 推理
+
+升级 diffusers 以使用 `HyNomasModularPipeline`。
+
+```bash
+pip install -e "diffusers[hy-nomas] @ git+https://github.com/jiaxiangc/diffusers.git@hy-nomas"
+```
+
+Hy-Nomas 支持多轮交互生成。以下示例生成两个各 5 秒的视频片段。
+
+```python
+import json
+
+import torch
+from diffusers import HyNomasModularPipeline
+from diffusers.utils import export_to_video
+
+pipe = HyNomasModularPipeline.from_pretrained("tencent/Hy-Nomas-Diffusers")
+pipe.load_components(dtype=torch.bfloat16)
+pipe.to(device="cuda", dtype=torch.bfloat16)
+# Use the FlashAttention and MagiAttention kernels installed with Hy-Nomas.
+pipe.transformer.enable_reference_attention(text_backend="flash_varlen", deterministic=True)
+
+prompts = [
+    {
+        "Style": "Cinematic fantasy", "perspective_view": "Third-person view",
+        "subject_list": [{
+            "subject_id": "fox", "display_name": "a small orange fox",
+            "subject_attribute": "Orange fur, white chest, and a fluffy tail.",
+        }],
+        "segments": [{
+            "visual_description_long": (
+                "A small orange fox stands on a stone path in a luminous forest. "
+                "Blue fireflies drift between the trees."
+            ),
+            "contained_actions": [{
+                "start_time": "00:00.000", "end_time": "00:05.000",
+                "action_description": "The fox walks slowly along the path.",
+            }],
+        }],
+    },
+    {
+        "segments": [{
+            "description_change": "Glowing blue flowers open beside the path as the fox continues forward.",
+            "contained_actions": [{
+                "start_time": "00:00.000", "end_time": "00:05.000",
+                "action_description": "The fox passes the flowers and looks around.",
+            }],
+        }],
+    },
+]
+
+videos = pipe(
+    prompt=[json.dumps(prompt) for prompt in prompts],
+    height=704,
+    width=1280,
+    num_frames=240,
+    segment_latent_lengths=[30, 30],
+    fps=24,
+    num_inference_steps=4,
+    generator=torch.Generator("cpu").manual_seed(42),
+    output="videos",
+)
+export_to_video(videos[0], "hy_nomas_video.mp4", fps=24, quality=None)
+```
 
 ### 交互式演示
 
