@@ -48,7 +48,7 @@ describe('camera playback action display', () => {
     expect(cameraSegmentIsActive(3.05, 3)).toBe(false)
   })
 
-  it('uses the shared HUD language and supports hiding the camera visualization', async () => {
+  it('shows MOVE/LOOK keys and a translucent path map and supports hiding them', async () => {
     const onVisibilityToggle = vi.fn()
     const path: CameraPath = {
       id: 'camera-test',
@@ -70,17 +70,15 @@ describe('camera playback action display', () => {
     const { rerender } = render(createElement(CameraPlaybackOverlay, {
       path,
       videoRef,
-      turnNumber: 7,
       segmentStartSeconds: 0,
       segmentDurationSeconds: 1,
-      theme: 'dark',
       visible: true,
       onVisibilityToggle,
     }))
 
-    expect(screen.getByLabelText('Camera path visualization')).toHaveTextContent(
-      'CAMERA PATHTurn 07',
-    )
+    expect(screen.getByLabelText('Camera movement')).toHaveTextContent('WASDMOVE')
+    expect(screen.getByLabelText('Camera rotation')).toHaveTextContent('↑←↓→LOOK')
+    expect(screen.getByLabelText('Camera path visualization')).toBeInTheDocument()
     expect(screen.getByText('Custom path 22:28')).toBeInTheDocument()
     await userEvent.setup().click(
       screen.getByRole('button', { name: 'Hide camera path' }),
@@ -90,13 +88,12 @@ describe('camera playback action display', () => {
     rerender(createElement(CameraPlaybackOverlay, {
       path,
       videoRef,
-      turnNumber: 7,
       segmentStartSeconds: 0,
       segmentDurationSeconds: 1,
-      theme: 'dark',
       visible: false,
       onVisibilityToggle,
     }))
+    expect(screen.queryByLabelText('Camera path visualization')).not.toBeInTheDocument()
     await userEvent.setup().click(
       screen.getByRole('button', { name: 'Show camera path' }),
     )

@@ -7,14 +7,11 @@ import { DirectionHud } from './DirectionHud'
 afterEach(cleanup)
 
 describe('DirectionHud', () => {
-  it('renders the real user prompt in a vector-backed playback panel', () => {
+  it('renders a bottom caption without a title or turn-count card', () => {
     const onVisibilityToggle = vi.fn()
     const { container } = render(
       <DirectionHud
         direction="Follow the river toward the bridge"
-        turnNumber={2}
-        progressPercent={42}
-        active
         visible
         onVisibilityToggle={onVisibilityToggle}
       />,
@@ -23,16 +20,11 @@ describe('DirectionHud', () => {
     expect(screen.getByLabelText('Real user prompt')).toHaveTextContent(
       'Follow the river toward the bridge',
     )
-    expect(screen.getByText('REAL USER PROMPT')).toBeInTheDocument()
-    expect(screen.getByText('Turn 02')).toBeInTheDocument()
-    expect(screen.getByText('LIVE')).toBeInTheDocument()
-    expect(container.querySelector('.direction-hud-frame')).toBeInstanceOf(
-      SVGSVGElement,
-    )
-    expect(container.querySelector('.direction-hud-progress')).toHaveAttribute(
-      'width',
-      '136.08',
-    )
+    expect(screen.getByText('TEXT')).toBeInTheDocument()
+    expect(screen.queryByText('Turn 02')).not.toBeInTheDocument()
+    expect(screen.queryByText('LIVE')).not.toBeInTheDocument()
+    expect(container.querySelector('.demo-prompt-overlay')).toBeInTheDocument()
+    expect(container.querySelector('.direction-hud-frame')).toBeNull()
   })
 
   it('offers compact controls to hide and restore the prompt', async () => {
@@ -41,9 +33,6 @@ describe('DirectionHud', () => {
     const { rerender } = render(
       <DirectionHud
         direction="Follow the river toward the bridge"
-        turnNumber={2}
-        progressPercent={42}
-        active
         visible
         onVisibilityToggle={onVisibilityToggle}
       />,
@@ -55,9 +44,6 @@ describe('DirectionHud', () => {
     rerender(
       <DirectionHud
         direction="Follow the river toward the bridge"
-        turnNumber={2}
-        progressPercent={42}
-        active
         visible={false}
         onVisibilityToggle={onVisibilityToggle}
       />,
