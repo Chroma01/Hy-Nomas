@@ -231,14 +231,14 @@ export_to_video(videos[0], "hy_nomas_video.mp4", fps=24, quality=None)
 
 ### Inference with Reactor Runtime
 
-The [Reactor integration guide](reactor/README.md) provides a streaming service and browser demo with live prompt updates, combined WASD/arrow camera control, and uploaded camera trajectories while retaining world history. The tested profile uses four B200 GPUs, Docker with NVIDIA Container Toolkit, the [Reactor CLI](https://docs.reactor.inc/deploy/platform/installation), and Node.js 22.
+The [Reactor integration guide](reactor/README.md) provides a streaming service and browser demo with live prompt updates, combined WASD/arrow camera control, and uploaded camera trajectories while retaining world history. The tested profile uses eight B200 GPUs, Docker with NVIDIA Container Toolkit, the [Reactor CLI](https://docs.reactor.inc/deploy/platform/installation), and Node.js 22.
 
 From this repository root:
 
 ```bash
 cd reactor
 reactor build
-reactor run --gpus '"device=0,1,2,3"' --shm-size 8g --port 8080
+reactor run --gpus '"device=0,1,2,3,4,5,6,7"' --shm-size 8g --port 8080
 ```
 
 Wait for `curl -fsS http://localhost:8080/health` to report `available`. In another terminal, from the repository root:
