@@ -1,4 +1,4 @@
-import { Eye, EyeOff } from 'lucide-react'
+import { OverlayVisibilityToggle } from './OverlayVisibilityToggle'
 
 interface DirectionHudProps {
   direction: string
@@ -11,32 +11,19 @@ export function DirectionHud({
   visible,
   onVisibilityToggle,
 }: DirectionHudProps) {
-  if (!visible) {
-    return (
-      <button
-        className="demo-overlay-toggle demo-overlay-reveal"
-        type="button"
-        aria-label="Show real user prompt"
-        onClick={onVisibilityToggle}
-      >
-        <Eye size={17} />
-        <span>Show prompt</span>
-      </button>
-    )
-  }
-
   return (
-    <aside className="demo-prompt-overlay" aria-label="Real user prompt">
-      <span className="demo-text-badge">TEXT</span>
-      <p>{direction}</p>
-      <button
-        className="demo-overlay-toggle"
-        type="button"
-        aria-label="Hide real user prompt"
-        onClick={onVisibilityToggle}
-      >
-        <EyeOff size={15} />
-      </button>
-    </aside>
+    <>
+      <OverlayVisibilityToggle
+        kind="prompt"
+        visible={visible}
+        onToggle={onVisibilityToggle}
+      />
+      {visible && (
+        <aside className="demo-prompt-overlay" aria-label="Real user prompt">
+          <span className="demo-text-badge">TEXT</span>
+          <p>{direction}</p>
+        </aside>
+      )}
+    </>
   )
 }

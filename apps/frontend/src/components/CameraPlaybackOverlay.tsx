@@ -1,7 +1,7 @@
-import { Eye, EyeOff } from 'lucide-react'
 import { useEffect, useState, type RefObject } from 'react'
 import type { CameraFrame, CameraKeyEvent, CameraPath } from '../types'
 import { CameraPathMap } from './CameraPathMap'
+import { OverlayVisibilityToggle } from './OverlayVisibilityToggle'
 
 interface CameraPlaybackOverlayProps {
   path: CameraPath
@@ -90,49 +90,36 @@ export function CameraPlaybackOverlay({
     return () => cancelAnimationFrame(request)
   }, [path.keyEvents, durationMs, videoRef, segmentStartSeconds, segmentDurationSeconds, visible])
 
-  if (!visible) {
-    return (
-      <button
-        className="demo-overlay-toggle demo-overlay-reveal"
-        type="button"
-        aria-label="Show camera path"
-        onClick={onVisibilityToggle}
-      >
-        <Eye size={17} />
-        <span>Show camera</span>
-      </button>
-    )
-  }
-
   return (
     <>
-      <CameraPathMap
-        frames={frames}
-        durationMs={durationMs}
-        progress={progress}
-        name={path.name}
-        rotationScale={path.visualizationRotationScale}
+      <OverlayVisibilityToggle
+        kind="camera"
+        visible={visible}
+        onToggle={onVisibilityToggle}
       />
-      <div className="demo-camera-overlay" aria-label="Camera action overlay">
-        {KEY_GROUPS.map((group) => (
-          <div className="demo-key-group" aria-label={group.aria} key={group.label}>
-            <div className="demo-key-grid">
-              {group.keys.map(([label, action]) => (
-                <kbd key={label} className={actions[action] ? 'active' : ''}>{label}</kbd>
-              ))}
-            </div>
-            <span>{group.label}</span>
+      {visible && (
+        <>
+          <CameraPathMap
+            frames={frames}
+            durationMs={durationMs}
+            progress={progress}
+            name={path.name}
+            rotationScale={path.visualizationRotationScale}
+          />
+          <div className="demo-camera-overlay" aria-label="Camera action overlay">
+            {KEY_GROUPS.map((group) => (
+              <div className="demo-key-group" aria-label={group.aria} key={group.label}>
+                <div className="demo-key-grid">
+                  {group.keys.map(([label, action]) => (
+                    <kbd key={label} className={actions[action] ? 'active' : ''}>{label}</kbd>
+                  ))}
+                </div>
+                <span>{group.label}</span>
+              </div>
+            ))}
           </div>
-        ))}
-        <button
-          className="demo-overlay-toggle"
-          type="button"
-          aria-label="Hide camera path"
-          onClick={onVisibilityToggle}
-        >
-          <EyeOff size={15} />
-        </button>
-      </div>
+        </>
+      )}
     </>
   )
 }

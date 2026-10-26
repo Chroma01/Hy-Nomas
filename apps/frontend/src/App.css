@@ -1426,7 +1426,7 @@ button {
 
 .demo-camera-map {
   position: absolute;
-  top: 5.4%;
+  top: 12%;
   right: 6.2%;
   z-index: 4;
   width: 24cqw;
@@ -1506,33 +1506,48 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px;
-  border: 0;
-  border-radius: 4px;
-  background: #0008;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid #ffffff73;
+  border-radius: 999px;
+  background: #111d;
   color: #fff;
+  box-shadow: 0 4px 14px #0007;
+  font: 700 12px/1 var(--sans);
+  letter-spacing: .01em;
   pointer-events: auto;
   cursor: pointer;
-}
-
-.demo-prompt-overlay > .demo-overlay-toggle,
-.demo-camera-overlay > .demo-overlay-toggle {
-  position: absolute;
-  right: -28px;
-  top: 0;
-  opacity: 0;
-}
-
-.video-frame:hover .demo-overlay-toggle,
-.demo-overlay-toggle:focus-visible {
   opacity: 1;
+  transition: background 140ms ease, border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.demo-overlay-toggle:hover {
+  border-color: #fff;
+  box-shadow: 0 5px 18px #0009;
+}
+
+.demo-overlay-toggle:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.demo-overlay-toggle.is-on {
+  border-color: #9dffbf;
+  background: #087a48ee;
+}
+
+.demo-overlay-toggle.is-off {
+  border-color: #ffd27a;
+  background: #7a3900ee;
 }
 
 .demo-overlay-reveal {
   position: absolute;
+  top: 5%;
   right: 5%;
-  bottom: 10%;
-  z-index: 4;
+  bottom: auto;
+  z-index: 5;
 }
 
 .demo-overlay-timeline {

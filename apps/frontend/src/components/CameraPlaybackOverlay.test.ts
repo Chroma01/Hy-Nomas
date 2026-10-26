@@ -80,6 +80,11 @@ describe('camera playback action display', () => {
     expect(screen.getByLabelText('Camera rotation')).toHaveTextContent('↑←↓→LOOK')
     expect(screen.getByLabelText('Camera path visualization')).toBeInTheDocument()
     expect(screen.getByText('Custom path 22:28')).toBeInTheDocument()
+    const visibilityToggle = screen.getByRole('button', {
+      name: 'Hide camera path',
+    })
+    expect(visibilityToggle).toHaveTextContent('Camera overlay on')
+    expect(visibilityToggle).toHaveAttribute('aria-pressed', 'true')
     await userEvent.setup().click(
       screen.getByRole('button', { name: 'Hide camera path' }),
     )
@@ -94,6 +99,11 @@ describe('camera playback action display', () => {
       onVisibilityToggle,
     }))
     expect(screen.queryByLabelText('Camera path visualization')).not.toBeInTheDocument()
+    const hiddenVisibilityToggle = screen.getByRole('button', {
+      name: 'Show camera path',
+    })
+    expect(hiddenVisibilityToggle).toHaveTextContent('Camera overlay off')
+    expect(hiddenVisibilityToggle).toHaveAttribute('aria-pressed', 'false')
     await userEvent.setup().click(
       screen.getByRole('button', { name: 'Show camera path' }),
     )

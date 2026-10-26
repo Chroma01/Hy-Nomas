@@ -21,6 +21,11 @@ describe('DirectionHud', () => {
       'Follow the river toward the bridge',
     )
     expect(screen.getByText('TEXT')).toBeInTheDocument()
+    const visibilityToggle = screen.getByRole('button', {
+      name: 'Hide real user prompt',
+    })
+    expect(visibilityToggle).toHaveTextContent('Prompt overlay on')
+    expect(visibilityToggle).toHaveAttribute('aria-pressed', 'true')
     expect(screen.queryByText('Turn 02')).not.toBeInTheDocument()
     expect(screen.queryByText('LIVE')).not.toBeInTheDocument()
     expect(container.querySelector('.demo-prompt-overlay')).toBeInTheDocument()
@@ -49,6 +54,11 @@ describe('DirectionHud', () => {
       />,
     )
     expect(screen.queryByLabelText('Real user prompt')).not.toBeInTheDocument()
+    const hiddenVisibilityToggle = screen.getByRole('button', {
+      name: 'Show real user prompt',
+    })
+    expect(hiddenVisibilityToggle).toHaveTextContent('Prompt overlay off')
+    expect(hiddenVisibilityToggle).toHaveAttribute('aria-pressed', 'false')
     await user.click(screen.getByRole('button', { name: 'Show real user prompt' }))
     expect(onVisibilityToggle).toHaveBeenCalledTimes(2)
   })
