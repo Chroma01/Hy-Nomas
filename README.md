@@ -96,7 +96,7 @@ Building with Hy-Nomas? We welcome community projects, integrations, tutorials, 
 - **Segment-based generation:** Autoregressive segment-wise world generation controlled by either segment level prompt or camera control signal, maintaining a lifelong KV cache for consistency.
 - **Free-form Prompt Control:** Control the world generation with any kind of free form user prompt to generate imaginary object, style, scene, and actions.
 - **Camera control:** Condition generation on camera trajectories alongside text prompts.
-- **Distilled inference:** Inference uses 8 denoising steps and a finetuned PixelUMM decoder for 32-channel DCAE-V latents.
+- **Distilled inference:** Inference uses 4-8 denoising steps and a finetuned PixelUMM decoder for 32-channel DCAE-V latents.
 - **Interactive demo:** A web interface supports generation across multiple turns and decoding at segment boundaries.
 - **Fine-tuning and data preparation:** Lora fine-tuning with customized video dataset, and prepare training data from local videos with our annotation workflow.
 
