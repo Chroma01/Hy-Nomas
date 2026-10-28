@@ -28,7 +28,7 @@
 <p align="center">
     🖥️&nbsp;<a href="https://hy-nomas.hy.tencent.com/demo"><b>Interactive Demo</b></a>&nbsp;&nbsp;|&nbsp;&nbsp;
     🌐&nbsp;<a href="https://hy-nomas.hy.tencent.com/"><b>Project Website</b></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-    📄&nbsp;<a href="https://github.com/Tencent-Hunyuan/Hy-Nomas/blob/main/Hy_Nomas_Tech_Report.pdf"><b>Technical Report</b></a>
+    📄&nbsp;<a href="https://arxiv.org/pdf/2610.36729"><b>Technical Report</b></a>
 </p>
 
 <p align="center">
@@ -36,7 +36,7 @@
 </p>
 
 ## 🔥 News
-
+- 📄 **Oct 27, 2026 — Technical report is available on arXiv:** [arXiv](https://arxiv.org/pdf/2610.36729).
 - 🤝 **Oct 26, 2026 — Community integrations:** Run Hy-Nomas with [SGLang](https://github.com/sgl-project/sglang/pull/46124), [ComfyUI](https://github.com/PedroMarinhoDev/ComfyUI-Hy-Nomas), or [Reactor Runtime](reactor/README.md). See [Community Contributions](#-community-contributions) for details.
 - 📄 **Oct 26, 2026 — Technical report:** Updated the [Hy-Nomas technical report](https://github.com/Tencent-Hunyuan/Hy-Nomas/blob/main/Hy_Nomas_Tech_Report.pdf).
 - 🌍 **Oct 25, 2026 — WanGP support:** [WanGP v18.81](https://github.com/deepbeepmeep/WanGP), by [@deepbeepmeep](https://x.com/deepbeepmeep), adds Hy-Nomas world generation with keyboard exploration and text-driven events. See the [announcement](https://x.com/deepbeepmeep/status/2114503683295662230) and [integration commit](https://github.com/deepbeepmeep/WanGP/commit/c4d3efce4cd896c6e14fcb82787577bfc3181b99).
@@ -364,6 +364,19 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 ## Acknowledgement
 
 We thank the teams behind [Gemma 4](https://deepmind.google/models/gemma/gemma-4/), [Qwen3.8](https://qwen.ai/blog?id=qwen3.8), [Kimi-K3](https://github.com/MoonshotAI/Kimi-K3), [DCAE-V](https://github.com/dc-ai-projects/DC-Gen), and [MagiAttention](https://github.com/SandAI-org/MagiAttention) for their valuable contributions to the community and the models, research, and tools that support this project.
+
+## Citation
+
+If you find Hy-Nomas useful in your research, please cite our technical report:
+
+```bibtex
+@article{chen2026hynomas,
+  title={Hy-Nomas: Towards Free-form Interactive World Generation},
+  author={Chen, Qiaoling and Cheng, Jiaxiang and Deng, Xueqing and Hang, Tiankai and Hou, Ji and Li, Jiaqi and Liu, Yifan and Lu, Tao and Tang, Junshu and Tang, Yu and others},
+  journal={arXiv preprint arXiv:2610.36729},
+  year={2026}
+}
+```
 
 ## Contact Us
 
