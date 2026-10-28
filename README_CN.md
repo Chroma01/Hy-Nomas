@@ -28,7 +28,7 @@
 <p align="center">
     🖥️&nbsp;<a href="https://hy-nomas.hy.tencent.com/demo"><b>交互式演示</b></a>&nbsp;&nbsp;|&nbsp;&nbsp;
     🌐&nbsp;<a href="https://hy-nomas.hy.tencent.com/"><b>项目网站</b></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-    📄&nbsp;<a href="https://arxiv.org/pdf/2610.36729"><b>技术报告</b></a>
+    📄&nbsp;<a href="https://arxiv.org/abs/2610.36729"><b>技术报告</b></a>
 </p>
 
 <p align="center">
@@ -36,7 +36,7 @@
 </p>
 
 ## 🔥 最新动态
-- 📄 **2026 年 10 月 27 日 — 技术报告已在 arXiv 发布：** [arXiv](https://arxiv.org/pdf/2610.36729)。
+- 📄 **2026 年 10 月 27 日 — 技术报告已在 arXiv 发布：** [arXiv](https://arxiv.org/abs/2610.36729)。
 - 🤝 **2026 年 10 月 26 日 — 社区集成：** Hy-Nomas 已支持 [SGLang](https://github.com/sgl-project/sglang/pull/46124)、[ComfyUI](https://github.com/PedroMarinhoDev/ComfyUI-Hy-Nomas) 和 [Reactor Runtime](reactor/README.md)，详情请见[社区贡献](#-社区贡献)。
 - 📄 **2026 年 10 月 26 日 — 技术报告：** 更新 [Hy-Nomas 技术报告](https://github.com/Tencent-Hunyuan/Hy-Nomas/blob/main/Hy_Nomas_Tech_Report.pdf)。
 - 🌍 **2026 年 10 月 25 日 — WanGP 支持：** [@deepbeepmeep](https://x.com/deepbeepmeep) 在 [WanGP v18.81](https://github.com/deepbeepmeep/WanGP) 中加入 Hy-Nomas 世界生成，支持键盘探索和文本事件控制。详见[公告](https://x.com/deepbeepmeep/status/2114503683295662230)与[集成提交](https://github.com/deepbeepmeep/WanGP/commit/c4d3efce4cd896c6e14fcb82787577bfc3181b99)。
