@@ -36,7 +36,7 @@
 </p>
 
 ## 🔥 最新动态
-- 🌍 **2026 年 10 月 29 日 — 基准与对比演示：** [Hy-Nomas-Bench](https://huggingface.co/datasets/tencent/Hy-Nomas-Bench) 已开源，支持可复现研究。详见[公告与 Hy-Nomas 和 Genie 4 对比视频](https://x.com/TencentHunyuan/status/2115851165904814283)及[技术报告](https://arxiv.org/abs/2610.36729)。
+- 🎬 **2026 年 10 月 29 日 — Hy-Nomas vs Genie 4：** 使用 Hy-Nomas 复现 Genie 4 示例，观看[视频对比](https://x.com/TencentHunyuan/status/2115851165904814283)。
 - 📄 **2026 年 10 月 27 日 — 技术报告已在 arXiv 发布：** [arXiv](https://arxiv.org/abs/2610.36729)。
 - 🤝 **2026 年 10 月 26 日 — 社区集成：** Hy-Nomas 已支持 [SGLang](https://github.com/sgl-project/sglang/pull/46124)、[ComfyUI](https://github.com/PedroMarinhoDev/ComfyUI-Hy-Nomas) 和 [Reactor Runtime](reactor/README.md)，详情请见[社区贡献](#-社区贡献)。
 - 📄 **2026 年 10 月 26 日 — 技术报告：** 更新 [Hy-Nomas 技术报告](https://github.com/Tencent-Hunyuan/Hy-Nomas/blob/main/Hy_Nomas_Tech_Report.pdf)。

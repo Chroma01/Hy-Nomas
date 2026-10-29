@@ -36,7 +36,7 @@
 </p>
 
 ## 🔥 News
-- 🌍 **Oct 29, 2026 — Benchmark and comparison:** [Hy-Nomas-Bench](https://huggingface.co/datasets/tencent/Hy-Nomas-Bench) is open sourced for reproducible research. See the [announcement and Hy-Nomas vs Genie 4 comparison video](https://x.com/TencentHunyuan/status/2115851165904814283), along with the [technical report](https://arxiv.org/abs/2610.36729).
+- 🎬 **Oct 29, 2026 — Hy-Nomas vs Genie 4:** Watch the [video comparison](https://x.com/TencentHunyuan/status/2115851165904814283), featuring Genie 4 examples recreated with Hy-Nomas.
 - 📄 **Oct 27, 2026 — Technical report is available on arXiv:** [arXiv](https://arxiv.org/abs/2610.36729).
 - 🤝 **Oct 26, 2026 — Community integrations:** Run Hy-Nomas with [SGLang](https://github.com/sgl-project/sglang/pull/46124), [ComfyUI](https://github.com/PedroMarinhoDev/ComfyUI-Hy-Nomas), or [Reactor Runtime](reactor/README.md). See [Community Contributions](#-community-contributions) for details.
 - 📄 **Oct 26, 2026 — Technical report:** Updated the [Hy-Nomas technical report](https://github.com/Tencent-Hunyuan/Hy-Nomas/blob/main/Hy_Nomas_Tech_Report.pdf).
