@@ -36,6 +36,7 @@
 </p>
 
 ## 🔥 News
+- 🌍 **Oct 29, 2026 — Benchmark and comparison:** [Hy-Nomas-Bench](https://huggingface.co/datasets/tencent/Hy-Nomas-Bench) is open sourced for reproducible research. See the [announcement and Hy-Nomas vs Genie 4 comparison video](https://x.com/TencentHunyuan/status/2115851165904814283), along with the [technical report](https://arxiv.org/abs/2610.36729).
 - 📄 **Oct 27, 2026 — Technical report is available on arXiv:** [arXiv](https://arxiv.org/abs/2610.36729).
 - 🤝 **Oct 26, 2026 — Community integrations:** Run Hy-Nomas with [SGLang](https://github.com/sgl-project/sglang/pull/46124), [ComfyUI](https://github.com/PedroMarinhoDev/ComfyUI-Hy-Nomas), or [Reactor Runtime](reactor/README.md). See [Community Contributions](#-community-contributions) for details.
 - 📄 **Oct 26, 2026 — Technical report:** Updated the [Hy-Nomas technical report](https://github.com/Tencent-Hunyuan/Hy-Nomas/blob/main/Hy_Nomas_Tech_Report.pdf).
@@ -54,7 +55,7 @@ If you develop/use Hy-Nomas in your projects, welcome to let us know.
 
 - **Google TPU demos** — [Mashbox demos](https://mashbox.gg/world), by [@boshjerns](https://x.com/boshjerns): Keyboard-controlled Hy-Nomas world generation on Google TPUs. The [announcement](https://x.com/boshjerns/status/2114962446947651907) reports real-time 720p generation on a v6e-4 slice (4 chips), with 0.933 seconds of compute per second of video and no late frames during a 60-second run.
 - **WanGP** — [WanGP](https://github.com/deepbeepmeep/WanGP), by [@deepbeepmeep](https://x.com/deepbeepmeep): Hy-Nomas support in v18.81 provides text-to-world generation, keyboard navigation and camera control, text-driven events, and adjustable history memory. Explorations can be saved and resumed or recorded as videos. See the [announcement](https://x.com/deepbeepmeep/status/2114503683295662230) and [integration commit](https://github.com/deepbeepmeep/WanGP/commit/c4d3efce4cd896c6e14fcb82787577bfc3181b99).
-- **SGLang** — [SGLang Diffusion](https://github.com/sgl-project/sglang), by [@sgl_project](https://x.com/sgl_project): Hy-Nomas support is merged into `main`, covering offline video jobs and real-time streaming sessions. See the [integration PR](https://github.com/sgl-project/sglang/pull/46124).
+- **SGLang** — [SGLang Diffusion](https://github.com/sgl-project/sglang), by [@sgl_project](https://x.com/sgl_project): Hy-Nomas support is merged into `main`, covering offline video jobs and real-time streaming sessions. See the [integration PR](https://github.com/sgl-project/sglang/pull/46124) and [installation guide](https://lmsysorg.mintlify.app/cookbook/diffusion/HY-Nomas/HY-Nomas#hw=h200&placement=resident&nodes=1&gpus_per_node=1&topology_mode=auto&tp_size=1&ulysses_degree=1&ring_degree=1).
 - **ComfyUI** — [ComfyUI-Hy-Nomas](https://github.com/PedroMarinhoDev/ComfyUI-Hy-Nomas), by [@LatentSpacer](https://x.com/LatentSpacer): A community integration with chained video segments and interactive WASD camera control.
 - **Reactor Runtime** — [Hy-Nomas integration guide](reactor/README.md), contributed by [@Rising0321](https://github.com/Rising0321): A streaming service and browser demo with live prompt updates, WASD/arrow camera control, and uploaded camera trajectories while retaining world history. See the [integration PR](https://github.com/Tencent-Hunyuan/Hy-Nomas/pull/3).
 
