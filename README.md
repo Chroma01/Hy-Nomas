@@ -79,6 +79,7 @@ Building with Hy-Nomas? We welcome community projects, integrations, tutorials, 
     - [Inference with Source Code](#inference-with-source-code)
     - [Inference with Low-Mem GPU](#inference-with-low-mem-gpu)
     - [Inference with Diffusers](#inference-with-diffusers)
+    - [Inference with SGLang](#inference-with-sglang)
   - [Interactive Demo](#interactive-demo)
     - [Reactor Runtime](#reactor-runtime)
     - [Web Demo](#web-demo)
@@ -271,9 +272,76 @@ videos = pipe(
 export_to_video(videos[0], "hy_nomas_video.mp4", fps=24, quality=None)
 ```
 
-### Interactive Demo
+#### Inference with SGLang
 
-#### Reactor Runtime
+[SGLang Diffusion](https://github.com/sgl-project/sglang) serves Hy-Nomas as offline video jobs and as realtime sessions that receive segments one at a time. It loads `tencent/Hy-Nomas` directly: the first start downloads the distilled DiT, the PixelUMM decoder, and the text encoder, then caches a local pipeline.
+
+SGLang adds the following inference optimizations:
+
+- **Parallelism:** Ulysses sequence parallelism and tensor parallelism for the DiT, with PixelUMM decoding windows spread across GPUs.
+- **Memory:** DiT layerwise offload streams transformer blocks from host memory.
+- **Attention:** Segment attention runs on FlashAttention-3 on Hopper GPUs, about 2× faster than FlexAttention, which serves as the fallback on other GPUs.
+- **Kernel fusion:** Fused elementwise kernels for modulation, QK norm with RoPE, and SwiGLU, bitwise identical to the unfused path.
+
+Run SGLang in its Docker image (recommended) or install it from source. Hy-Nomas support is not yet in a stable release: use the nightly `lmsysorg/sglang:dev` image, rebuilt daily from `main`, and switch to `lmsysorg/sglang:latest` once a release includes Hy-Nomas.
+
+```bash
+docker run --rm -it --gpus all --ipc=host --network=host \
+  -v "$HOME/.cache:/root/.cache" \
+  lmsysorg/sglang:dev bash
+```
+
+Mounting `~/.cache` keeps the downloaded weights and the assembled pipeline across containers. To install from source instead:
+
+```bash
+git clone https://github.com/sgl-project/sglang.git
+cd sglang
+pip install uv
+uv venv --python 3.12
+source .venv/bin/activate
+uv pip install -e "python[diffusion]" --prerelease=allow
+```
+
+Inside the container or the source environment, start a server on one GPU, or on two GPUs with sequence parallelism:
+
+```bash
+sglang serve --model-path tencent/Hy-Nomas --num-gpus 1 --port 30000
+# sglang serve --model-path tencent/Hy-Nomas --num-gpus 2 --sp-degree 2 --port 30000
+```
+
+A request lists its segments, each with a frame count and a structured caption. This example sends the `prompts` from the Diffusers example above as two 120-frame segments:
+
+```python
+import json
+import time
+
+import requests
+
+base = "http://127.0.0.1:30000"
+captions = [json.dumps(prompt) for prompt in prompts]
+job = requests.post(f"{base}/v1/videos", json={
+    "prompt": captions[0],
+    "prompt_format": "json",
+    "segments": [{"frames": 120, "caption": caption} for caption in captions],
+    "num_frames": 240,
+    "height": 704,
+    "width": 1280,
+    "fps": 24,
+    "num_inference_steps": 8,
+    "guidance_scale": 1.0,
+    "seed": 42,
+}).json()
+while job["status"] not in ("completed", "failed"):
+    time.sleep(2)
+    job = requests.get(f"{base}/v1/videos/{job['id']}").json()
+assert job["status"] == "completed", job
+with open("hy_nomas_sglang.mp4", "wb") as f:
+    f.write(requests.get(f"{base}/v1/videos/{job['id']}/content").content)
+```
+
+The same server accepts realtime WebSocket sessions at `/v1/realtime_video/generate`. Each segment is generated as soon as it arrives, and frames stream back as they are decoded. See the [SGLang Hy-Nomas guide](https://docs.sglang.io/cookbook/diffusion/HY-Nomas/HY-Nomas) for the realtime protocol, camera control, layerwise offload, and the KV cache budget.
+
+#### Inference with Reactor Runtime
 
 The [Reactor integration guide](reactor/README.md) provides a streaming service and browser demo with live prompt updates, combined WASD/arrow camera control, and uploaded camera trajectories while retaining world history. The tested profile uses eight B200 GPUs, Docker with NVIDIA Container Toolkit, the [Reactor CLI](https://docs.reactor.inc/deploy/platform/installation), and Node.js 22.
 
